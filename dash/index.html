@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        #user-info {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            display: none;
+            align-items: center;
+        }
+        #user-info img {
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            margin-right: 10px;
+        }
+        #user-info p {
+            margin: 0;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div id="user-info">
+        <img id="user-avatar" alt="User Avatar">
+        <p id="username"></p>
+    </div>
+
+    <script>
+        // Check if there's an access token in the URL hash
+        const urlParams = new URLSearchParams(window.location.hash.substring(1));
+        const accessToken = urlParams.get('access_token');
+
+        if (accessToken) {
+            // Fetch user data from Discord
+            fetch('https://discord.com/api/users/@me', {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Display the user's information in the top-left corner
+                document.getElementById('user-avatar').src = `https://cdn.discordapp.com/avatars/${data.id}/${data.avatar}.png`;
+                document.getElementById('username').innerText = `${data.username}#${data.discriminator}`;
+                document.getElementById('user-info').style.display = 'flex';
+            })
+            .catch(err => {
+                console.error('Error fetching Discord user data:', err);
+            });
+        } else {
+            // Redirect to login page if no token is found
+            window.location.href = 'https://drug.lol/';
+        }
+    </script>
+</body>
+</html>
